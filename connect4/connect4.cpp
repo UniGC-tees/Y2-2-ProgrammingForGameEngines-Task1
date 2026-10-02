@@ -83,9 +83,26 @@ void SwapPlayer()
     else player = 1;
 }
 
+bool CheckDraw()
+{
+    for (int i = 0; i < board2d.size() + 1; i++)
+    {
+        if (board2d[0][i] == 0) return false;
+    }
+    return true;
+}
+
+// true == win
+bool CheckBoard()
+{
+    if (CheckDraw()) return true;
+
+    return false;
+}
+
 void DoTurn()
 {
-    int input;
+    int input = -1;
     std::cout << "\n\n\n";
     std::cin >> input;
     PlaceChip(input);
@@ -94,14 +111,19 @@ void DoTurn()
 
 void GameLoop()
 {
-    while (true)
+    do
     {
         DrawBoard();
         DoTurn();
-    }
+    } while (CheckBoard() == false);
 }
 
 int main()
 {
     GameLoop();
+
+    //game end
+
+    DrawBoard();
+    std::cout << "\n\n\n   !!!!!!!!\n game over!!!\n   !!!!!!!!\n\n\n ";
 }
