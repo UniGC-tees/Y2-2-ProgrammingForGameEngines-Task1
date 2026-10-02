@@ -1,6 +1,11 @@
 #include <vector>
 #include <iostream>
 
+struct pos
+{
+    int x;
+    int y;
+};
 
 std::vector<std::vector<int>> board2d =
 {
@@ -65,22 +70,30 @@ void DrawBoard()
     DrawNumbers();
 }
 
-void PlaceChip(int row)
+pos PlaceChip(int row)
 {
     for (int i = board2d.size() - 1; i >= 0; i--)
     {
         if (board2d[i][row] == 0)
         {
             board2d[i][row] = player;
+            return pos{ row, i };
             break;
         }
     }
+    return pos{ -1,-1 };
 }
 
 void SwapPlayer()
 {
     if (player == 1) player = 2;
     else player = 1;
+}
+
+int Flip(int in)
+{
+    if (in == 1) return 2;
+    if (in == 2) return 1;
 }
 
 bool CheckDraw()
@@ -93,29 +106,46 @@ bool CheckDraw()
 }
 
 // true == win
-bool CheckBoard()
+bool CheckWin(pos lastChip)
 {
-    if (CheckDraw()) return true;
+ /*   int chipType = board2d[lastChip.y][lastChip.x];
+
+    for (size_t i = 0; i < 4; i++)
+    {
+        if (board2d[lastChip.y - i][lastChip.x] != chipType) return false;
+    }
+    return true;*/
 
     return false;
 }
 
-void DoTurn()
+// true == win
+bool CheckBoard(pos lastChip)
+{
+    if (CheckDraw()) return true;
+    if (CheckWin(lastChip)) return true;
+
+    return false;
+}
+
+pos DoTurn()
 {
     int input = -1;
     std::cout << "\n\n\n";
     std::cin >> input;
-    PlaceChip(input);
+    pos lastChip = PlaceChip(input);
     SwapPlayer();
+    return lastChip;
 }
 
 void GameLoop()
 {
+    pos lastChip;
     do
     {
         DrawBoard();
-        DoTurn();
-    } while (CheckBoard() == false);
+        lastChip = DoTurn();
+    } while (CheckBoard(lastChip) == false);
 }
 
 int main()
